@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid rounded" style="max-height: 400px; width: auto;">
+            {% else %}
+            <div class="bg-light p-5 rounded text-center">
+                <p class="text-muted">No image available</p>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-7">
+            <h1>{{ product.name }}</h1>
+            <p class="lead">{{ product.description }}</p>
+            
+            <div class="mb-3">
+                <h4>${{ "%.2f"|format(product.price) }}</h4>
+            </div>
+
+            <!-- Add size and location information -->
+            <div class="mb-3">
+                <p><strong>Size:</strong> {{ product.size }}</p>
+                <p>Gender:{{ product.gender_tag|capitalize }}</p>
+                <p><strong>Location:</strong> {{ product.location }}</p>
+            </div>
+            
+            {% if current_user.is_authenticated and not current_user.is_admin %}
+            <form method="post" action="{{ url_for('routes.add_to_cart', product_id=product.id) }}">
+                <div class="input-group mb-3" style="max-width: 200px;">
+                    <span class="input-group-text">Quantity</span>
+                    <input type="number" class="form-control" name="quantity" value="1" min="1" max="10">
+                </div>
+                <button type="submit" class="btn btn-primary">Add to Cart</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

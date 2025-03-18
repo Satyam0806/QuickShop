@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Your Cart</h1>
+
+    {% if cart_products %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_products %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>${{ "%.2f"|format(item.product.price) }}</td>
+                        <td>
+                            <input type="number" min="1" class="form-control text-center" value="{{ item.quantity }}" readonly>
+                        </td>
+                        <td>${{ "%.2f"|format(item.total) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="table-active">
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td>${{ "%.2f"|format(total) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a href="{{ url_for('routes.checkout') }}" class="btn btn-success btn-lg">Proceed to Checkout</a>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">Your cart is empty.</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Orders</h1>
+
+{% if order_details %}
+    {% for detail in order_details %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">Order #{{ detail.order.id }}</h5>
+                <small class="text-muted">Placed on {{ detail.order.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <div>
+                <span class="badge {% if detail.order.status == 'pending' %}bg-warning{% elif detail.order.status == 'shipped' %}bg-info{% else %}bg-success{% endif %}">
+                    {{ detail.order.status }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <h6>Order Details:</h6>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in detail.products %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>${{ "%.2f"|format(item.price) }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="table-active">
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td>${{ "%.2f"|format(detail.order.total_price) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-3">
+                <h6>Shipping Status:</h6>
+                <div class="progress">
+                    {% if detail.order.status == 'pending' %}
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 33%">Pending</div>
+                    {% elif detail.order.status == 'shipped' %}
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 66%">Shipped</div>
+                    {% else %}
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%">Delivered</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">You haven't placed any orders yet.</div>
+{% endif %}
+{% endblock %}

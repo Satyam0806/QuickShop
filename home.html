@@ -1,0 +1,669 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Hero Section Styles */
+    .hero-section {
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.9), rgba(44, 62, 80, 0.9));
+        color: white;
+        padding: 6rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('your-background-image.jpg') no-repeat center center;
+        background-size: cover;
+        opacity: 0.2;
+        z-index: 1;
+    }
+
+    .hero-section h1 {
+        font-weight: 700;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Featured Image Section */
+    .featured-images {
+        padding: 4rem 0;
+        background-color: #f8f9fa;
+    }
+
+    .featured-image {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .featured-image:hover {
+        transform: scale(1.05);
+    }
+
+    .featured-image img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    /* Flash Sales Carousel */
+    .flash-sales {
+        background-color: #ffffff;
+        padding: 4rem 0;
+    }
+
+    .flash-sales-carousel .carousel-item img {
+        height: 500px;
+        object-fit: cover;
+    }
+
+    .flash-sales-timer {
+        background-color: rgba(52, 152, 219, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .flash-sales-timer .timer-item {
+        display: inline-block;
+        margin: 0 10px;
+    }
+
+    .flash-sales-timer .timer-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #3498DB;
+    }
+
+    .flash-sales-timer .timer-label {
+        display: block;
+        font-size: 0.8rem;
+        color: #7f8c8d;
+    }
+
+    /* Product Card Styles */
+    .product-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-card .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .product-card .btn-primary {
+        background-color: #3498DB;
+        border-color: #3498DB;
+        transition: all 0.3s ease;
+    }
+
+    .product-card .btn-primary:hover {
+        background-color: #2980B9;
+        transform: translateY(-3px);
+    }
+
+    .product-card .card-body {
+        padding: 1.25rem;
+        text-align: center;
+    }
+
+    .product-card .card-title {
+        font-weight: 600;
+        color: #2C3E50;
+    }
+
+    .product-card .card-text {
+        color: #3498DB;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>Discover Your Style</h1>
+                <p>Explore our latest collection of trendy and comfortable clothing.
+                    From casual wear to elegant outfits, we have something for everyone.</p>
+                <a href="#products" class="btn btn-light btn-lg">Shop Now</a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="/static/images/hero.webp" alt="Fashion Collection" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Flash Sales Carousel -->
+<section class="flash-sales">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2>Flash Sales</h2>
+                <div class="flash-sales-timer">
+                    <div class="timer-item">
+                        <span class="timer-value" id="hours">00</span>
+                        <span class="timer-label">Hours</span>
+                    </div>
+                    <div class="timer-item">
+                        <span class="timer-value" id="minutes">00</span>
+                        <span class="timer-label">Minutes</span>
+                    </div>
+                    <div class="timer-item">
+                        <span class="timer-value" id="seconds">00</span>
+                        <span class="timer-label">Seconds</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="flashSalesCarousel" class="carousel slide flash-sales-carousel" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/static/images/download(1).png" class="d-block w-100" alt="Flash Sale 1">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Summer Collection Sale</h5>
+                        <p>Up to 50% Off</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/download(2).jpg" class="d-block w-100" alt="Flash Sale 2">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Casual Wear Discount</h5>
+                        <p>Buy 2 Get 1 Free</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/download.jpg" class="d-block w-100" alt="Flash Sale 3">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Formal Wear Clearance</h5>
+                        <p>Flat 40% Off</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#flashSalesCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#flashSalesCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<div class="container" id="products">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h2 class="text-center">Our Latest Collection</h2>
+            <hr class="w-25 mx-auto">
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated and not current_user.is_admin and not current_user.is_delivery_partner and
+    recommended_products %}
+    <div class="container mt-4 mb-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Recommended For You</h2>
+                <div class="row">
+                    {% for product in recommended_products %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card product-card h-100">
+                            {% if product.image_url %}
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                            {% else %}
+                            <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center"
+                                style="height: 200px;">
+                                <span>No Image Available</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">${{ "%.2f"|format(product.price) }}</p>
+                                <a href="{{ url_for('routes.product', product_id=product.id) }}"
+                                    class="btn btn-primary">View Details</a>
+                                <form action="{{ url_for('routes.add_to_cart', product_id=product.id) }}" method="post"
+                                    class="d-inline">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="icon-btn">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if products|length == 0 %}
+    <div class="text-center py-5">
+        <h3>No Products Available</h3>
+        <p>Check back soon for new arrivals!</p>
+    </div>
+    {% endif %}
+<!-- #3d <section></section> -->
+<section class="clothing-models-section">
+    <div class="models-header">
+      <h2>3D Clothing Collection</h2>
+      <p>Explore our latest designs with interactive 3D models</p>
+    </div>
+    
+    <div class="models-gallery">
+      <div class="model-item">
+        <h3>Striker14 Jumpsuit</h3>
+        <div class="model-container">
+          <!-- Sketchfab Embed of Jumpsuit model -->
+          <div class="sketchfab-embed-wrapper">
+            <iframe 
+              title="Jumpsuit Low Poly Game Ready (Striker14)" 
+              frameborder="0" 
+              allowfullscreen 
+              mozallowfullscreen="true" 
+              webkitallowfullscreen="true" 
+              allow="autoplay; fullscreen; xr-spatial-tracking" 
+              xr-spatial-tracking 
+              execution-while-out-of-viewport 
+              execution-while-not-rendered 
+              web-share 
+              src="https://sketchfab.com/models/da288adbddf949aa85962968732f0999/embed">
+            </iframe>
+          </div>
+          <div class="model-caption">
+            Professional jumpsuit with durable design
+          </div>
+        </div>
+      </div>
+      
+      <div class="model-item">
+        <h3>Red Dress</h3>
+        <div class="model-container">
+          <!-- Sketchfab Embed of Red Dress model -->
+          <div class="sketchfab-embed-wrapper">
+            <iframe 
+              title="Red Dress Project" 
+              frameborder="0" 
+              allowfullscreen 
+              mozallowfullscreen="true" 
+              webkitallowfullscreen="true" 
+              allow="autoplay; fullscreen; xr-spatial-tracking" 
+              xr-spatial-tracking 
+              execution-while-out-of-viewport 
+              execution-while-not-rendered 
+              web-share 
+              src="https://sketchfab.com/models/8028c520388e4964a3add25f1a4fd1ec/embed">
+            </iframe>
+          </div>
+          <div class="model-caption">
+            Elegant evening dress with flowing design
+          </div>
+        </div>
+      </div>
+      
+      <div class="model-item">
+        <h3>Reference Male Scan</h3>
+        <div class="model-container">
+          <!-- Sketchfab Embed of Male Scan model -->
+          <div class="sketchfab-embed-wrapper">
+            <iframe 
+              title="CDDE_Posed_Reference_Male_Scan" 
+              frameborder="0" 
+              allowfullscreen 
+              mozallowfullscreen="true" 
+              webkitallowfullscreen="true" 
+              allow="autoplay; fullscreen; xr-spatial-tracking" 
+              xr-spatial-tracking 
+              execution-while-out-of-viewport 
+              execution-while-not-rendered 
+              web-share 
+              src="https://sketchfab.com/models/5026ebbc84a74aea9f01f186fc851d8f/embed">
+            </iframe>
+          </div>
+          <div class="model-caption">
+            Detailed male reference scan for accurate sizing
+          </div>
+        </div>
+      </div>
+      
+      <div class="model-item">
+        <h3>Army Jacket</h3>
+        <div class="model-container">
+          <!-- Sketchfab Embed of Army Jacket model -->
+          <div class="sketchfab-embed-wrapper">
+            <iframe 
+              title="REAL Army Jacket" 
+              frameborder="0" 
+              allowfullscreen 
+              mozallowfullscreen="true" 
+              webkitallowfullscreen="true" 
+              allow="autoplay; fullscreen; xr-spatial-tracking" 
+              xr-spatial-tracking 
+              execution-while-out-of-viewport 
+              execution-while-not-rendered 
+              web-share 
+              src="https://sketchfab.com/models/730e9269cdb647f1898b2b87190d6b4e/embed">
+            </iframe>
+          </div>
+          <div class="model-caption">
+            Authentic military-inspired jacket with functional pockets
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="models-info">
+      <h3>Interactive 3D Models</h3>
+      <p>Our 3D models allow you to:</p>
+      <ul>
+        <li>Rotate each item 360° by clicking and dragging</li>
+        <li>Zoom in to see fabric details and construction</li>
+        <li>Examine the garments from every angle</li>
+        <li>Appreciate the design elements and proportions</li>
+      </ul>
+      
+      
+    </div>
+  
+    <style>
+      .clothing-models-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      
+      .models-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .models-header h2 {
+        color: #333;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+      
+      .models-header p {
+        color: #666;
+        font-size: 18px;
+      }
+      
+      .models-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      
+      .model-item {
+        flex: 1 1 450px;
+        min-width: 300px;
+      }
+      
+      .model-item h3 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #333;
+        font-size: 24px;
+      }
+      
+      .model-container {
+        height: 450px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      .model-caption {
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 10px;
+        position: relative;
+        bottom: 45px;
+        text-align: center;
+      }
+      
+      .sketchfab-embed-wrapper {
+        width: 100%;
+        height: 450px;
+      }
+      
+      .sketchfab-embed-wrapper iframe {
+        width: 100%;
+        height: 100%;
+      }
+      
+      .models-info {
+        background-color: #f9f9f9;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      }
+      
+      .models-info h3 {
+        margin-top: 0;
+        color: #333;
+        font-size: 22px;
+      }
+      
+      .models-info ul {
+        padding-left: 20px;
+      }
+      
+      .models-info li {
+        margin-bottom: 10px;
+        line-height: 1.5;
+      }
+      
+      .attribution {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+        font-size: 13px;
+        color: #4A4A4A;
+      }
+      
+      .attribution a {
+        font-weight: bold;
+        color: #1CAAD9;
+        text-decoration: none;
+      }
+      
+      .attribution a:hover {
+        text-decoration: underline;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .models-gallery {
+          flex-direction: column;
+        }
+        
+        .model-item {
+          flex: 1 1 100%;
+        }
+        
+        .model-container {
+          height: 350px;
+        }
+        
+        .sketchfab-embed-wrapper {
+          height: 350px;
+        }
+      }
+    </style>
+  </section>
+<!-- end of 3d -->
+    <!-- Brands Section -->
+    <!-- Brands Section -->
+    <!-- Brands Section -->
+    <section class="brands-section py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2>Our Trusted Brands</h2>
+                    <p class="text-muted">Discover the brands that define our collection</p>
+                </div>
+            </div>
+            <div class="row">
+                <style>
+                    /* Brand Card Styles */
+                    .brand-card {
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 10px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .brand-card::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+
+                    .brand-card:hover::before {
+                        opacity: 1;
+                    }
+
+                    .brand-card img {
+                        width: 100%;
+                        height: 300px;
+                        object-fit: cover;
+                        transition: transform 0.3s ease;
+                    }
+
+                    .brand-card:hover img {
+                        transform: scale(1.1);
+                    }
+
+                    .brand-card-overlay {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        text-align: center;
+                        color: white;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+
+                    .brand-card:hover .brand-card-overlay {
+                        opacity: 1;
+                    }
+
+                    .brand-card-overlay h3 {
+                        font-weight: bold;
+                        margin-bottom: 15px;
+                    }
+                </style>
+
+
+                <div class="col-md-4 mb-4">
+                    <a href="{{ url_for('routes.city', admin_username='admin') }}" class="text-decoration-none">
+                        <div class="brand-card">
+                            <img src="/static/images/Zara Logo.jpg" alt="Zara">
+                            <div class="brand-card-overlay">
+                                <h3>Zara</h3>
+                                <p>Contemporary Fashion</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <a href="{{ url_for('routes.city', admin_username='admin2') }}" class="text-decoration-none">
+                        <div class="brand-card">
+                            <img src="/static/images/Westside.webp" alt="Westside">
+                            <div class="brand-card-overlay">
+                                <h3>Westside</h3>
+                                <p>Luxury Clothing</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <a href="{{ url_for('routes.city', admin_username='admin2') }}" class="text-decoration-none">
+                        <div class="brand-card">
+                            <img src="/static/images/Marks & Spencer.png" alt="Marks & Spencer">
+                            <div class="brand-card-overlay">
+                                <h3>Marks & Spencer</h3>
+                                <p>Urban Trends</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Countdown Timer Script
+    function updateCountdown() {
+        const now = new Date();
+        const endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        const timeLeft = endTime - now;
+
+        const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeLeft / 1000) % 60);
+
+        document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Update countdown every second
+    setInterval(updateCountdown, 1000);
+    updateCountdown(); // Initial call
+</script>
+{% endblock %}

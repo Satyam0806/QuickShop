@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 2rem 0;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .login-card-header {
+        background: linear-gradient(to right, #3498db, #2c3e50);
+        color: white;
+        text-align: center;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .login-card-header h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .login-card-body {
+        padding: 2rem;
+        background: white;
+    }
+
+    .form-control {
+        border-radius: 30px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        border-color: #3498db;
+    }
+
+    .btn-login {
+        border-radius: 30px;
+        padding: 10px 20px;
+        background: linear-gradient(to right, #3498db, #2c3e50);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 1rem;
+        color: #6c757d;
+    }
+
+    .login-footer a {
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+
+    .social-login {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+
+    .social-login-btn {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        text-align: center;
+        margin: 0 10px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .social-login-btn.google {
+        background-color: #db4437;
+    }
+
+    .social-login-btn.facebook {
+        background-color: #4267B2;
+    }
+
+    .social-login-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider:not(:empty)::before {
+        margin-right: .25em;
+    }
+
+    .divider:not(:empty)::after {
+        margin-left: .25em;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-card-header">
+            <h2>Welcome Back</h2>
+        </div>
+        <div class="login-card-body">
+            <form method="post">
+                {{ form.csrf_token }}
+                <div class="mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control", placeholder="Enter your username") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control", placeholder="Enter your password") }}
+                    <div class="text-end mt-2">
+                        <a href="#" class="text-muted" style="font-size: 0.8rem;">Forgot Password?</a>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-login w-100 text-white">Login</button>
+                
+                <div class="divider">or</div>
+                
+                <div class="social-login">
+                    <a href="#" class="social-login-btn google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-login-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+        <div class="login-footer">
+            Need an account? <a href="{{ url_for('routes.register') }}">Sign up here</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Optional: Add some client-side validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const usernameInput = document.querySelector('input[name="username"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Basic validation
+            if (usernameInput.value.trim() === '') {
+                usernameInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                usernameInput.classList.remove('is-invalid');
+            }
+
+            if (passwordInput.value.trim() === '') {
+                passwordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

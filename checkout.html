@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Checkout</h1>
+    
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Your Cart</span>
+                <span class="badge bg-primary rounded-pill">{{ cart_products|length }}</span>
+            </h4>
+            <ul class="list-group mb-3">
+                {% for item in cart_products %}
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <h6 class="my-0">{{ item.product.name }}</h6>
+                        <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                    </div>
+                    <span class="text-muted">${{ "%.2f"|format(item.total) }}</span>
+                </li>
+                {% endfor %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>${{ "%.2f"|format(total) }}</strong>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Checkout Form -->
+        <div class="col-md-8 order-md-1">
+            <form method="post">
+                {{ form.csrf_token }}
+                
+                <h4 class="mb-3">Shipping Address</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        {{ form.full_name.label(class="form-label") }}
+                        {{ form.full_name(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-12">
+                        {{ form.address_line1.label(class="form-label") }}
+                        {{ form.address_line1(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-12">
+                        {{ form.address_line2.label(class="form-label") }}
+                        {{ form.address_line2(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-md-5">
+                        {{ form.city.label(class="form-label") }}
+                        {{ form.city(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-md-4">
+                        {{ form.state.label(class="form-label") }}
+                        {{ form.state(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        {{ form.postal_code.label(class="form-label") }}
+                        {{ form.postal_code(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {{ form.country.label(class="form-label") }}
+                        {{ form.country(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control") }}
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <h4 class="mb-3">Payment (Demo)</h4>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> This is a demo payment form. No real payments will be processed.
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-12">
+                        {{ form.card_name.label(class="form-label") }}
+                        {{ form.card_name(class="form-control") }}
+                    </div>
+                    
+                    <div class="col-12">
+                        {{ form.card_number.label(class="form-label") }}
+                        {{ form.card_number(class="form-control", placeholder="1234 5678 9012 3456") }}
+                    </div>
+                    
+                    <div class="col-md-4">
+                        {{ form.expiry_month.label(class="form-label") }}
+                        {{ form.expiry_month(class="form-select") }}
+                    </div>
+                    
+                    <div class="col-md-4">
+                        {{ form.expiry_year.label(class="form-label") }}
+                        {{ form.expiry_year(class="form-select") }}
+                    </div>
+                    
+                    <div class="col-md-4">
+                        {{ form.cvv.label(class="form-label") }}
+                        {{ form.cvv(class="form-control", placeholder="123") }}
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    {{ form.submit.label.text }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

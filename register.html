@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 2rem 0;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 450px;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .register-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .register-card-header {
+        background: linear-gradient(to right, #3498db, #2c3e50);
+        color: white;
+        text-align: center;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .register-card-header h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .register-card-body {
+        padding: 2rem;
+        background: white;
+    }
+
+    .form-control {
+        border-radius: 30px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        border-color: #3498db;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .btn-register {
+        border-radius: 30px;
+        padding: 10px 20px;
+        background: linear-gradient(to right, #3498db, #2c3e50);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    }
+
+    .register-footer {
+        text-align: center;
+        margin-top: 1rem;
+        color: #6c757d;
+    }
+
+    .register-footer a {
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .register-footer a:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+
+    .password-strength {
+        height: 4px;
+        margin-top: 5px;
+        background-color: #e0e0e0;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: width 0.3s ease;
+    }
+
+    .password-strength-weak {
+        background-color: #dc3545;
+    }
+
+    .password-strength-medium {
+        background-color: #ffc107;
+    }
+
+    .password-strength-strong {
+        background-color: #28a745;
+    }
+
+    .password-requirements {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+
+    .social-register {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+
+    .social-register-btn {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        text-align: center;
+        margin: 0 10px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .social-register-btn.google {
+        background-color: #db4437;
+    }
+
+    .social-register-btn.facebook {
+        background-color: #4267B2;
+    }
+
+    .social-register-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider:not(:empty)::before {
+        margin-right: .25em;
+    }
+
+    .divider:not(:empty)::after {
+        margin-left: .25em;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-card-header">
+            <h2>Create Your Account</h2>
+        </div>
+        <div class="register-card-body">
+            <form method="post" id="registerForm">
+                {{ form.csrf_token }}
+                <div class="mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control", placeholder="Choose a username") }}
+                    <div class="invalid-feedback username-error"></div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control", placeholder="Create a strong password") }}
+                    <div class="password-strength">
+                        <div class="password-strength-bar"></div>
+                    </div>
+                    <div class="password-requirements text-muted">
+                        Password must be at least 8 characters long and include uppercase, lowercase, and a number.
+                    </div>
+                    <div class="invalid-feedback password-error"></div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                    <div class="invalid-feedback confirm-password-error"></div>
+                </div>
+                <div class="mb-3">
+                    {{ form.gender.label(class="form-label") }}
+                    {{ form.gender(class="form-control") }}
+                    <div class="invalid-feedback gender-error"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-register w-100 text-white">{{ form.submit.label.text }}</button>
+                
+                <div class="divider">or</div>
+                
+                <div class="social-register">
+                    <a href="#" class="social-register-btn google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-register-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+        <div class="register-footer">
+            Already have an account? <a href="{{ url_for('routes.login') }}">Sign in here</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const usernameInput = document.querySelector('input[name="username"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+        const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+        const passwordStrengthBar = document.querySelector('.password-strength-bar');
+
+        // Password Strength Checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+
+            passwordStrengthBar.style.width = `${strength * 20}%`;
+            passwordStrengthBar.className = 'password-strength-bar';
+            
+            if (strength <= 2) {
+                passwordStrengthBar.classList.add('password-strength-weak');
+            } else if (strength <= 4) {
+                passwordStrengthBar.classList.add('password-strength-medium');
+            } else {
+                passwordStrengthBar.classList.add('password-strength-strong');
+            }
+        }
+
+        // Real-time password strength check
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        // Form Validation
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Username validation
+            if (usernameInput.value.trim() === '') {
+                usernameInput.classList.add('is-invalid');
+                document.querySelector('.username-error').textContent = 'Username is required';
+                isValid = false;
+            } else {
+                usernameInput.classList.remove('is-invalid');
+            }
+
+            // Password validation
+            if (passwordInput.value.trim() === '') {
+                passwordInput.classList.add('is-invalid');
+                document.querySelector('.password-error').textContent = 'Password is required';
+                isValid = false;
+            } else if (passwordInput.value.length < 8) {
+                passwordInput.classList.add('is-invalid');
+                document.querySelector('.password-error').textContent = 'Password must be at least 8 characters long';
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+            }
+
+            // Confirm password validation
+            if (confirmPasswordInput.value.trim() === '') {
+                confirmPasswordInput.classList.add('is-invalid');
+                document.querySelector('.confirm-password-error').textContent = 'Please confirm your password';
+                isValid = false;
+            } else if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.classList.add('is-invalid');
+                document.querySelector('.confirm-password-error').textContent = 'Passwords do not match';
+                isValid = false;
+            } else {
+                confirmPasswordInput.classList.remove('is-invalid');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
