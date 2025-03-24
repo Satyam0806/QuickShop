@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
+from sqlalchemy import text
 from models import db, User
 from routes import routes
 
@@ -21,76 +22,99 @@ def load_user(user_id):
 # Register blueprints
 app.register_blueprint(routes)
 
-with app.app_context():
-    # Create all tables first - THIS IS THE KEY MISSING PART
+def create_users():
+    # Create all tables first
     db.create_all()
     
-    # Now you can add columns or query tables
+    # List of users to create or update
+    users_to_create = [
+        {
+            'username': 'admin',
+            'password': 'admin123',
+            'is_admin': True,
+            'is_delivery_partner': False
+        },
+        {
+            'username': 'admin2',
+            'password': 'admin456',
+            'is_admin': True,
+            'is_delivery_partner': False
+        },
+        {
+            'username': 'admin3',
+            'password': 'admin789',
+            'is_admin': True,
+            'is_delivery_partner': False
+        },
+        {
+            'username': 'customer',
+            'password': 'password123',
+            'is_admin': False,
+            'is_delivery_partner': False
+        },
+        {
+            'username': 'delivery',
+            'password': 'delivery123',
+            'is_admin': False,
+            'is_delivery_partner': True
+        }
+    ]
+    
+    # Try to add gender column safely
     try:
-        # Try a simple query that would fail if the column doesn't exist
-        db.session.execute("SELECT gender FROM user LIMIT 1")
-        print("Gender column exists, skipping modification")
-    except:
+        # Check if gender column exists
+        db.session.execute(text("SELECT gender FROM user LIMIT 1"))
+        print("Gender column already exists")
+    except Exception as e:
         try:
-            # Column doesn't exist, add it
-            db.session.execute("ALTER TABLE user ADD COLUMN gender VARCHAR(10)")
+            # Add gender column if it doesn't exist
+            db.session.execute(text("ALTER TABLE user ADD COLUMN gender VARCHAR(10)"))
             db.session.commit()
             print("Added gender column to user table")
-        except Exception as e:
-            print(f"Error adding column: {e}")
-            print("Proceeding with existing schema")
+        except Exception as alter_error:
+            print(f"Error adding gender column: {alter_error}")
     
-    # Create main admin user if not exists
-    admin = User.query.filter_by(username='admin').first()
-    if not admin:
-        admin = User(
-            username='admin',
-            password=generate_password_hash('admin123'),
-            is_admin=True,
-            is_delivery_partner=False
-        )
-        db.session.add(admin)
-        db.session.commit()
-        print("Admin user created")
-    
-    # Create a second admin user if not exists
-    admin2 = User.query.filter_by(username='admin2').first()
-    if not admin2:
-        admin2 = User(
-            username='admin2',
-            password=generate_password_hash('admin456'),
-            is_admin=True,
-            is_delivery_partner=False
-        )
-        db.session.add(admin2)
-        db.session.commit()
-        print("Second admin user created")
-
-    # Create regular user if not exists
-    customer = User.query.filter_by(username='customer').first()
-    if not customer:
-        customer = User(
-            username='customer',
-            password=generate_password_hash('password123'),
-            is_admin=False,
-            is_delivery_partner=False
-        )
-        db.session.add(customer)
-        db.session.commit()
-        print("Customer user created")
+    # Create or update users
+    for user_data in users_to_create:
+        try:
+            # Try to find existing user
+            existing_user = User.query.filter_by(username=user_data['username']).first()
+            
+            if existing_user:
+                # Update existing user to ensure correct admin status
+                existing_user.is_admin = user_data['is_admin']
+                existing_user.is_delivery_partner = user_data['is_delivery_partner']
+                print(f"Updated user: {user_data['username']}")
+            else:
+                # Create new user if not exists
+                new_user = User(
+                    username=user_data['username'],
+                    password=generate_password_hash(user_data['password']),
+                    is_admin=user_data['is_admin'],
+                    is_delivery_partner=user_data['is_delivery_partner']
+                )
+                db.session.add(new_user)
+                print(f"Created user: {user_data['username']}")
         
-    # Create delivery partner user if not exists
-    delivery_partner = User.query.filter_by(username='delivery').first()
-    if not delivery_partner:
-        delivery_partner = User(
-            username='delivery',
-            password=generate_password_hash('delivery123'),
-            is_admin=False,
-            is_delivery_partner=True
-        )
-        db.session.add(delivery_partner)
+        except Exception as user_error:
+            print(f"Error creating/updating user {user_data['username']}: {user_error}")
+    
+    # Commit all changes
+    try:
         db.session.commit()
-        print("Delivery partner user created")
+    except Exception as commit_error:
+        print(f"Error committing changes: {commit_error}")
+        db.session.rollback()
+    
+    # Print all existing users for verification
+    print("\nExisting Users:")
+    users = User.query.all()
+    for user in users:
+        print(f"Username: {user.username}, Is Admin: {user.is_admin}, Is Delivery Partner: {user.is_delivery_partner}")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Run user creation within app context
+with app.app_context():
+    create_users()
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
