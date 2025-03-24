@@ -107,7 +107,7 @@ def brand_page(admin_username, city, area):
     ).all()
     
     # Get brand name (for display purposes)
-    brand_name = "Zara" if admin_username == "admin" else "Marks & Spencer" if admin_username == "admin2" else admin_username
+    brand_name = "Zara" if admin_username == "admin" else "Marks & Spencer" if admin_username == "admin2" else "Westside" if admin_username == "admin3" else admin_username
     
     return render_template('brand.html', products=products, brand_name=brand_name, admin=admin, location=formatted_location)
 
@@ -135,14 +135,33 @@ def product(product_id):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        # Debug print
+        print(f"Login attempt for username: {form.username.data}")
+        
         user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        
+        if not user:
+            print(f"No user found with username: {form.username.data}")
+            # Print all usernames for verification
+            all_users = User.query.all()
+            for u in all_users:
+                print(f"Existing user: {u.username}, Is Admin: {u.is_admin}")
+            
+            flash('Invalid username or password')
+            return render_template('login.html', form=form)
+        
+        # Debug password check
+        from werkzeug.security import check_password_hash
+        is_password_correct = check_password_hash(user.password, form.password.data)
+        print(f"Password check for {form.username.data}: {is_password_correct}")
+        print(f"User admin status: {user.is_admin}")
+        
+        if is_password_correct:
             login_user(user)
             if user.is_admin:
                 return redirect(url_for('routes.admin_dashboard'))
-            elif user.is_delivery_partner:  # Add this condition
-                return redirect(url_for('routes.delivery_dashboard'))
             return redirect(url_for('routes.home'))
+        
         flash('Invalid username or password')
     return render_template('login.html', form=form)
 
