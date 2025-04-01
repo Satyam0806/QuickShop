@@ -23,7 +23,8 @@
                     </div>
                     <div class="mb-3">
                         {{ form.size.label(class="form-label") }}
-                        {{ form.size(class="form-select") }}
+                        {{ form.size(class="form-select", multiple="multiple", size="5") }}
+                        <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple options</small>
                     </div>
                     <div class="mb-3">
                         {{ form.location.label(class="form-label") }}
@@ -36,6 +37,11 @@
                     <div class="mb-3">
                         {{ form.gender_tag.label(class="form-label") }}
                         {{ form.gender_tag(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.shared_product_id.label(class="form-label") }}
+                        {{ form.shared_product_id(class="form-control") }}
+                        <small class="form-text text-muted">Use the same ID for identical products across all outlets</small>
                     </div>
                     <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
                 </form>
