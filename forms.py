@@ -11,28 +11,18 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
     
 class ProductForm(FlaskForm):
-    name = StringField('Product Name', validators=[DataRequired(), Length(min=2, max=100)])
+    name = StringField('Product Name', validators=[DataRequired()])
     description = TextAreaField('Description')
-    price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0.01)])
+    price = FloatField('Price', validators=[DataRequired()])
     image_url = StringField('Image URL')
-    # Add gender tag field
-    gender_tag = SelectField('Gender Category', choices=[
-        ('men', 'Men'),
-        ('women', 'Women'),
-        ('unisex', 'Unisex'),
-        ('kids', 'Kids')
-    ])
-    # Size field with choices
+    gender_tag = SelectField('Gender', choices=[('men', 'Men'), ('women', 'Women'), ('unisex', 'Unisex')])
     size = SelectField('Size', choices=[
-        ('XS', 'Extra Small (XS)'), 
-        ('S', 'Small (S)'), 
-        ('M', 'Medium (M)'), 
-        ('L', 'Large (L)'), 
-        ('XL', 'Extra Large (XL)'), 
-        ('XXL', 'Double Extra Large (XXL)')
+        ('XS', 'XS'), ('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('XXL', 'XXL'),
+        ('28', '28'), ('30', '30'), ('32', '32'), ('34', '34'), ('36', '36'), ('38', '38'), ('40', '40')
     ])
-    # Location field
     location = StringField('Store Location', validators=[DataRequired()])
+    # Add shared product ID field
+    shared_product_id = StringField('Shared Product ID', description='Use the same ID for identical products across outlets')
     submit = SubmitField('Add Product')
     
 class UpdateOrderForm(FlaskForm):
