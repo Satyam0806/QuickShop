@@ -13,22 +13,39 @@
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in cart_products %}
                     <tr>
-                        <td>{{ item.product.name }}</td>
+                        <td>
+                            <a href="{{ url_for('routes.product', product_id=item.product.id) }}">
+                                {{ item.product.name }}
+                            </a>
+                        </td>
                         <td>${{ "%.2f"|format(item.product.price) }}</td>
                         <td>
-                            <input type="number" min="1" class="form-control text-center" value="{{ item.quantity }}" readonly>
+                            <form method="POST" action="{{ url_for('routes.update_cart', product_id=item.product.id) }}" class="d-flex">
+                                <input type="number" name="quantity" min="1" max="{{ item.product.inventory_quantity }}" 
+                                       class="form-control text-center me-2" 
+                                       value="{{ item.quantity }}"
+                                       onchange="this.form.submit()">
+                            </form>
                         </td>
                         <td>${{ "%.2f"|format(item.total) }}</td>
+                        <td class="text-center">
+                            <form method="POST" action="{{ url_for('routes.remove_from_cart', product_id=item.product.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                     <tr class="table-active">
                         <td colspan="3" class="text-end fw-bold">Total:</td>
-                        <td>${{ "%.2f"|format(total) }}</td>
+                        <td colspan="2">${{ "%.2f"|format(total) }}</td>
                     </tr>
                 </tbody>
             </table>
