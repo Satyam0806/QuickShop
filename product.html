@@ -5,7 +5,8 @@
     <div class="row">
         <div class="col-md-5">
             {% if product.image_url %}
-            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid rounded" style="max-height: 400px; width: auto;">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid rounded"
+                style="max-height: 400px; width: auto;">
             {% else %}
             <div class="bg-light p-5 rounded text-center">
                 <p class="text-muted">No image available</p>
@@ -15,28 +16,186 @@
         <div class="col-md-7">
             <h1>{{ product.name }}</h1>
             <p class="lead">{{ product.description }}</p>
-            
+
             <div class="mb-3">
                 <h4>${{ "%.2f"|format(product.price) }}</h4>
             </div>
 
-            <!-- Add size and location information -->
+            <!-- Size and location information -->
             <div class="mb-3">
                 <p><strong>Size:</strong> {{ product.size }}</p>
-                <p>Gender:{{ product.gender_tag|capitalize }}</p>
+                <p><strong>Gender:</strong> {{ product.gender_tag|capitalize }}</p>
                 <p><strong>Location:</strong> {{ product.location }}</p>
+                <p><strong>Available Quantity:</strong> {{ product.inventory_quantity }}</p>
             </div>
-            
+
             {% if current_user.is_authenticated and not current_user.is_admin %}
+            {% if product.inventory_quantity > 0 %}
             <form method="post" action="{{ url_for('routes.add_to_cart', product_id=product.id) }}">
                 <div class="input-group mb-3" style="max-width: 200px;">
                     <span class="input-group-text">Quantity</span>
-                    <input type="number" class="form-control" name="quantity" value="1" min="1" max="10">
+                    <input type="number" class="form-control" name="quantity" value="1" min="1"
+                        max="{{ product.inventory_quantity }}">
                 </div>
                 <button type="submit" class="btn btn-primary">Add to Cart</button>
             </form>
+            {% else %}
+            {% if product.inventory_quantity <= 0 %} 
+            <div class="alert alert-warning">
+                <strong>Out of stock in this size at this location!</strong>
+                {% if same_location_sizes and same_location_sizes|length > 0 %}
+                <p>But other sizes are available - see below.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+
+            {% if same_location_sizes and same_location_sizes|length > 0 %}
+            <div class="mt-4">
+                <h4>Other Sizes Available at this Location:</h4>
+                <div class="list-group">
+                    {% for alt_product in same_location_sizes %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Size: {{ alt_product.size }}</h5>
+                            <p class="mb-1">Quantity: {{ alt_product.inventory_quantity }}</p>
+                        </div>
+                        <a href="{{ url_for('routes.product', product_id=alt_product.id) }}" 
+                           class="btn btn-sm btn-outline-primary">
+                            View Product
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if alternative_sizes and alternative_sizes|length > 0 %}
+            <div class="mt-4">
+                <h4>Available at Other Locations:</h4>
+                <div class="list-group">
+                    {% for alt in alternative_sizes %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Size: {{ alt.size }}</h5>
+                        </div>
+                        <p class="mb-1">{{ alt.location }}</p>
+                        <small>Brand: {{ alt.brand }}</small>
+                        
+                        {% if current_user.is_authenticated and not current_user.is_admin %}
+                        <div class="alternative-location-container">
+                            <input type="hidden" class="brand-input" value="{{ alt.brand }}">
+                            <input type="hidden" class="location-input" value="{{ alt.location }}">
+                            <a href="#" class="btn btn-sm btn-outline-primary mt-2 alternative-location">
+                                Go to Store
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <h4 id="loadingMessage">Redirecting to brand page...</h4>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all alternative location links
+    const alternativeLocationLinks = document.querySelectorAll('.alternative-location');
+    
+    alternativeLocationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Find the parent container
+            const container = this.closest('.alternative-location-container');
+            
+            // Get brand and location from hidden inputs
+            const brand = container.querySelector('.brand-input').value;
+            const location = container.querySelector('.location-input').value;
+            
+            // Determine admin username based on brand
+            let adminUsername = 'admin';
+            if (brand === 'Marks & Spencer') {
+                adminUsername = 'admin2';
+            } else if (brand === 'Westside') {
+                adminUsername = 'admin3';
+            }
+            
+            // Parse location
+            const locationParts = location.split(', ');
+            const area = locationParts[0].toLowerCase().replace(/\s+/g, '-');
+            const city = locationParts[1] ? locationParts[1].toLowerCase().replace(/\s+/g, '-') : 'unknown';
+            
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            loadingMessage.textContent = `Redirecting to ${brand} page...`;
+            loadingOverlay.classList.add('active');
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = `/${adminUsername}/${city}/${area}`;
+            }, 1500);
+        });
+    });
+});
+</script>
+
+<style>
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f0f4f8;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.list-group-item {
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
 {% endblock %}
